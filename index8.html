@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://bootswatch.com/4/pulse/bootstrap.min.css">
+</head>
+<body>
+    <h1 class="display-3 m-3 text-center">Tareas de Renzo</h1>
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-4">
+                <form action="#" class="form-group" id="formulario">
+                    <div class="form-group">
+                        <input type="text" name="" id="tarea" placeholder="tarea" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <textarea name="" id="description" cols="20" rows="10" class="form-control" placeholder="descripción"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-block btn-danger">Save</button>
+                </form>
+            </div>
+            <div class="col-md-8" id="tareas">
+
+            </div>
+        </div>
+    </div>
+    
+
+
+    <script>
+        document.getElementById('formulario').addEventListener('submit',obtenerDatos)
+        function obtenerDatos(e){
+            let tarea=document.getElementById('tarea').value
+            let description=document.getElementById('description').value
+            
+            let orden={
+                tarea, 
+                description
+            }
+            if(tarea===''||description===''){
+                alert('Rellena los campos primero')
+            }else if(localStorage.getItem('tareas')===null){
+                let tareas=[];
+                tareas.push(orden);
+                localStorage.setItem('tareas', JSON.stringify(tareas))
+            }else{
+                let tareas=JSON.parse(localStorage.getItem('tareas'))
+                tareas.push(orden)
+                localStorage.setItem('tareas', JSON.stringify(tareas))
+            }
+            function resetear(){
+                document.getElementById('formulario').reset()
+            }
+            resetear();
+            insertarDatos();
+            e.preventDefault();
+            
+        }
+
+        function insertarDatos(){
+            let div=document.getElementById('tareas')
+            let tareas=JSON.parse(localStorage.getItem('tareas'))
+            div.innerHTML='';
+            for(let i=0;i<tareas.length;i++){
+                let tarea=tareas[i].tarea
+                let description=tareas[i].description
+                div.innerHTML+=` <div class='card mb-3'><div class='card-body text-center'><b>Tarea: </b> ${tarea} <br>
+                    <b>Descripción: </b> ${description} <br>
+                    <a class="btn btn-success mt-1 rounded-pill" onclick="deleteDatos('${tarea}')">Realizada</a>
+                    </div></div> `
+            }
+
+        }
+        function deleteDatos(tarea){
+            let tareas=JSON.parse(localStorage.getItem('tareas'))
+            for(i=0;i<tareas.length;i++){
+                if(tareas[i].tarea==tarea){
+                    tareas.splice(i,1)
+                }
+            }
+            localStorage.setItem('tareas',JSON.stringify(tareas))
+            insertarDatos()
+        }
+        insertarDatos();
+</script>
+</body>
+</html>
